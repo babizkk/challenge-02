@@ -88,19 +88,19 @@ SCRUM-16: Login com senha inválida
     Validar Erro De Login    ${response}    Email e/ou senha inválidos
 
 SCRUM-27: Cadastrar usuário com senha > 10 caracteres
-    [Documentation]    Valida que é possível cadastrar usuário com senha maior que 10 caracteres
+    [Documentation]    Não deve ser possível cadastrar usuário com senha maior que 10 caracteres
     [Tags]    POST    cadastro    negativo    bug
-    
-    ${senha_longa}=    Gerar Senha    tamanho=11
-    ${usuario}=    Gerar Dados de Usuário
 
+    ${senha_longa}=    Gerar Senha    tamanho=11
+
+    ${usuario}=    Gerar Dados de Usuário
     Set To Dictionary    ${usuario}    password=${senha_longa}
     ${response}=    Cadastrar Usuario    ${usuario}
-    
     Validar Cadastro Usuario Com Sucesso    ${response}
 
-    Log To Console    Usuário cadastrado: ${usuario}[email]
-    Log To Console    Senha: ${usuario}[password]
+    Log To Console    Senha cadastrada: ${senha_longa}
+
+    Should Be Equal As Numbers    ${response.status_code}    ${STATUS_400}
 
 SCRUM-28: Cadastrar usuário com email com @gmail.com
     [Documentation]    Valida que é possível cadastrar usuário com email @gmail.com
