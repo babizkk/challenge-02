@@ -2,10 +2,10 @@
 Documentation    Keywords relacionadas ao módulo de produtos
 Library          RequestsLibrary
 Library          Collections
-Library          ../libraries/FakerHelper.py
-Resource         variables.resource
-Resource         auth_keywords.resource
-Resource         usuarios_keywords.resource
+Library          ../../libraries/FakerHelper.py
+Resource         ../variables.resource
+Resource         ../autenticação/auth_keywords.resource
+Resource         ../usuarios/usuarios_keywords.resource
 
 *** Keywords ***
 Gerar Dados de Produto

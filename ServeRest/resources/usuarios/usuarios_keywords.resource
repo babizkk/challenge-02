@@ -2,8 +2,8 @@
 Documentation    Keywords relacionadas ao módulo de usuários
 Library          RequestsLibrary
 Library          Collections
-Library          ../libraries/FakerHelper.py
-Resource         variables.resource
+Library          ../../libraries/FakerHelper.py
+Resource         ../variables.resource
 
 *** Keywords ***
 Gerar Dados de Usuário

@@ -1,9 +1,9 @@
 *** Settings ***
 Documentation    Testes do módulo de produtos
-Resource         ../../resources/produtos_keywords.resource
-Resource         ../../resources/auth_keywords.resource
-Resource         ../../resources/usuarios_keywords.resource
-Resource         ../../resources/carrinho_keywords.resource
+Resource         ../../resources/produtos/produtos_keywords.resource
+Resource         ../../resources/autenticação/auth_keywords.resource
+Resource         ../../resources/usuarios/usuarios_keywords.resource
+Resource         ../../resources/carrinho/carrinho_keywords.resource
 
 Library          DateTime
 
@@ -38,6 +38,7 @@ SCRUM-17: POST - Cadastrar produto com token de autenticação válido
     
     ${produto}=    Gerar Dados de Produto
     ${response}=    Cadastrar Produto Com Token    ${produto}    ${TOKEN_SUITE}
+    Log To Console    Produto cadastrado: ${response.json()}
     Validar Cadastro Produto Com Sucesso    ${response}
 
 SCRUM-18: GET - Buscar produto por ID sem token de autenticação
@@ -120,11 +121,9 @@ SCRUM-29: POST - Cadastrar Produto com quantidade 0
     Set To Dictionary    ${produto}    quantidade=0
     
     ${response}=    Cadastrar Produto Com Token    ${produto}    ${TOKEN_SUITE}
+    Log To Console    BUG - Quantidade 0 aceita: ${response.json()}
     
     Should Be Equal As Numbers    ${response.status_code}    ${STATUS_400}
-    
-    Log To Console    Status Code: ${response.status_code}
-    Log To Console    Produto cadastrado com sucesso: ${response.text}
 
 SCRUM-30: POST - Cadastrar produto com nome já existente
     [Documentation]    Valida que não é possível cadastrar um produto com nome já existente
@@ -132,6 +131,7 @@ SCRUM-30: POST - Cadastrar produto com nome já existente
     
     ${produto}=    Gerar Dados de Produto
     ${response_1}=    Cadastrar Produto Com Token    ${produto}    ${TOKEN_SUITE}
+    Log To Console    Primeiro produto: ${response_1.json()}
     
     Validar Cadastro Produto Com Sucesso    ${response_1}
     
@@ -140,12 +140,10 @@ SCRUM-30: POST - Cadastrar produto com nome já existente
     Set To Dictionary    ${nome_duplicado}    nome=${nome_existente}
     
     ${response_2}=    Cadastrar Produto Com Token    ${nome_duplicado}    ${TOKEN_SUITE}
+    Log To Console    Nome duplicado: ${response_2.json()}
     
     Should Be Equal As Numbers    ${response_2.status_code}    ${STATUS_400}
     Should Be Equal    ${response_2.json()}[message]    Já existe produto com esse nome
-    
-    Log To Console    Status Code: ${response_2.status_code}
-    Log To Console    Response Body: ${response_2.text}
 
 SCRUM-31: PUT - Editar produto sem token de autenticação
     [Documentation]    Valida que não é possível editar um produto sem fornecer token de autenticação
