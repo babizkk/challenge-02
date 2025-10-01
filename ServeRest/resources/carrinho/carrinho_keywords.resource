@@ -2,7 +2,7 @@
 Documentation    Keywords relacionadas ao módulo de carrinho
 Library          RequestsLibrary
 Library          Collections
-Resource         variables.resource
+Resource         ../variables.resource
 
 *** Keywords ***
 Criar Dados Carrinho

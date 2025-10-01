@@ -1,7 +1,7 @@
 *** Settings ***
 Documentation    Testes de cadastro e autenticação de usuários
-Resource         ../../resources/usuarios_keywords.resource
-Resource         ../../resources/auth_keywords.resource
+Resource         ../../resources/usuarios/usuarios_keywords.resource
+Resource         ../../resources/autenticação/auth_keywords.resource
 Test Tags        usuarios
 
 *** Test Cases ***
@@ -11,6 +11,7 @@ SCRUM-9: Cadastrar usuário válido
     
     ${usuario}=    Gerar Dados de Usuário
     ${response}=    Cadastrar Usuario    ${usuario}
+    Log To Console    Usuário cadastrado: ${response.json()}
     Validar Cadastro Usuario Com Sucesso    ${response}
     Log To Console    Usuário cadastrado: ${usuario}[email]
 
@@ -19,9 +20,9 @@ SCRUM-10: Cadastrar usuário com e-mail inválido
     [Tags]    POST    cadastro    negativo
     
     ${usuario}=    Gerar Dados de Usuário
-
     Set To Dictionary    ${usuario}    email=emailRandom
     ${response}=    Cadastrar Usuario    ${usuario}
+    Log To Console    Erro esperado: ${response.json()}
     
     Should Be Equal As Numbers    ${response.status_code}    ${STATUS_400}
     Should Be Equal    ${response.json()}[email]    email deve ser um email válido
@@ -31,9 +32,9 @@ SCRUM-11: Cadastrar usuário com senha igual a 5 caracteres
     [Tags]    POST    cadastro    negativo
     
     ${usuario}=    Gerar Dados de Usuário
-
     Set To Dictionary    ${usuario}    password=12345
     ${response}=    Cadastrar Usuario    ${usuario}
+    Log To Console    Erro esperado: ${response.json()}
     
     Should Be Equal As Numbers    ${response.status_code}    ${STATUS_400}
     Should Be Equal    ${response.json()}[password]    password deve ter pelo menos 6 caracteres
@@ -44,9 +45,11 @@ SCRUM-12: Cadastrar usuário com e-mail já existente
 
     ${usuario}=    Gerar Dados de Usuário
     ${response1}=    Cadastrar Usuario    ${usuario}
+    Log To Console    Primeiro cadastro: ${response1.json()}
     Should Be Equal As Numbers    ${response1.status_code}    ${STATUS_201}
     
     ${response2}=    Cadastrar Usuario    ${usuario}
+    Log To Console    Email duplicado: ${response2.json()}
     Validar Email Duplicado    ${response2}
 
 SCRUM-14: Login válido
@@ -58,6 +61,7 @@ SCRUM-14: Login válido
     Should Be Equal As Numbers    ${response_cadastro.status_code}    ${STATUS_201}
     
     ${response}=    Realizar Login    ${usuario}[email]    ${usuario}[password]
+    Log To Console    Login realizado: ${response.json()}
     Validar Login    ${response}
     
     ${token}=    Extrair Token Da Resposta    ${response}
@@ -69,9 +73,10 @@ SCRUM-15: Login com e-mail inválido (não cadastrado)
     [Tags]    POST    login    negativo
     
     ${email_inexistente}=    Gerar Email
-    ${senha_valida}=    Gerar Senha    tamanho=8 
+    ${senha_valida}=    Gerar Senha    tamanho=8
     
     ${response}=    Realizar Login    ${email_inexistente}    ${senha_valida}
+    Log To Console    Login inválido: ${response.json()}
     Validar Erro De Login    ${response}    Email e/ou senha inválidos
 
 SCRUM-16: Login com senha inválida
@@ -82,41 +87,42 @@ SCRUM-16: Login com senha inválida
     ${response_cadastro}=    Cadastrar Usuario    ${usuario}
     Should Be Equal As Numbers    ${response_cadastro.status_code}    ${STATUS_201}
     
-    ${senha_invalida}=    Gerar Senha    tamanho=8 
+    ${senha_invalida}=    Gerar Senha    tamanho=8
     
     ${response}=    Realizar Login    ${usuario}[email]    ${senha_invalida}
+    Log To Console    Senha inválida: ${response.json()}
     Validar Erro De Login    ${response}    Email e/ou senha inválidos
 
 SCRUM-27: Cadastrar usuário com senha > 10 caracteres
-    [Documentation]    Valida que é possível cadastrar usuário com senha maior que 10 caracteres
+    [Documentation]    Não deve ser possível cadastrar usuário com senha maior que 10 caracteres
     [Tags]    POST    cadastro    negativo    bug
-    
-    ${senha_longa}=    Gerar Senha    tamanho=11
-    ${usuario}=    Gerar Dados de Usuário
 
+    ${senha_longa}=    Gerar Senha    tamanho=11
+
+    ${usuario}=    Gerar Dados de Usuário
     Set To Dictionary    ${usuario}    password=${senha_longa}
     ${response}=    Cadastrar Usuario    ${usuario}
-    
+    Log To Console    BUG - Senha longa aceita: ${response.json()}
     Validar Cadastro Usuario Com Sucesso    ${response}
 
-    Log To Console    Usuário cadastrado: ${usuario}[email]
-    Log To Console    Senha: ${usuario}[password]
+    Log To Console    Senha cadastrada: ${senha_longa}
+
+    Should Be Equal As Numbers    ${response.status_code}    ${STATUS_400}
 
 SCRUM-28: Cadastrar usuário com email com @gmail.com
     [Documentation]    Valida que é possível cadastrar usuário com email @gmail.com
     [Tags]    POST    cadastro    negativo    bug
     
-    ${inicio_email}=    Gerar Senha    tamanho=6 
-    
+    ${inicio_email}=    Gerar Senha    tamanho=6
     ${email_gmail}=    Catenate    SEPARATOR=    ${inicio_email}    @gmail.com
     
     ${usuario}=    Gerar Dados de Usuário
-    
-    Set To Dictionary    ${usuario}    
+    Set To Dictionary    ${usuario}
     ...    email=${email_gmail}
     ...    password=teste123
     
     ${response}=    Cadastrar Usuario    ${usuario}
+    Log To Console    BUG - Gmail aceito: ${response.json()}
     Validar Cadastro Usuario Com Sucesso    ${response}
 
     Should Be Equal As Numbers    ${response.status_code}    ${STATUS_400}

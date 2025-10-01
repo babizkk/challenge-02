@@ -2,8 +2,8 @@
 Documentation    Keywords relacionadas à autenticação
 Library          RequestsLibrary
 Library          Collections
-Resource         variables.resource
-Resource         usuarios_keywords.resource
+Resource         ../variables.resource
+Resource         ../usuarios/usuarios_keywords.resource
 
 *** Keywords ***
 Realizar Login
@@ -12,6 +12,8 @@ Realizar Login
     ${body}=    Create Dictionary
     ...    email=${email}
     ...    password=${password}
+
+
     
     Create Session    serverest    ${BASE_URL}    verify=True
     ${response}=    POST On Session
