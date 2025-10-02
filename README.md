@@ -83,7 +83,7 @@ robot ServeRest/tests
 Para rodar uma suite específica:
 
 ```
-robot tests/carrinho/tests_carrinho.robot
+robot ServeRest/tests/carrinho/tests_carrinho.robot
 ```
 
 Para ver o relatório: <br>
