@@ -69,7 +69,7 @@ SCRUM-14: Login válido
     Log To Console    Token obtido: ${token}
 
 SCRUM-15: Login com e-mail inválido (não cadastrado)
-    [Documentation]    Valida erro ao tentar login com e-mail não cadastrado
+    [Documentation]    Valida erro ao tentar login com e-mail não cadastrado.
     [Tags]    POST    login    negativo
     
     ${email_inexistente}=    Gerar Email
